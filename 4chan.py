@@ -51,7 +51,7 @@ def thread_page(query_choice,thread_list,thread_num):
         for num in thread_num:
             if num in answer_text:
                 answer_text= answer_text.replace(num,thread_num_c[thread_num.index(num)]+num+ '\x1b[0m'+' ')
-                break
+                #break
         print('======================')
         print('||'+number_answer)  
         print('||'+(re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')), 0, re.DOTALL)))
