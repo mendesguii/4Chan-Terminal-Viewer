@@ -14,6 +14,7 @@ def generate_colors():
         #print(len(thread_num_c))
 
 def main_page(thread_list,soup,count):
+    count_replies = 0
     os.system('clear')
     generate_colors()
     for thread in soup.find_all('div',class_='thread'):
@@ -23,9 +24,13 @@ def main_page(thread_list,soup,count):
                 if 'The /g/ Wiki' not in title:
                     thread_list.append(number)
                     print('==========#'+str(count)+'=============')
-                    print('||POST N# '+number+' ||  ')
-                    print('\n'+('- '+'\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')+(re.sub("(.{80})", "\\1\n", title.replace('>',''), 0, re.DOTALL)+'\n'))
-
+                    print('||Thread N# '+'\x1b[1;31;40m' +number+'\x1b[0m'+' ||  ')
+                    print('\n'+(re.sub("(.{80})", "\\1\n", title.replace('>',''), 0, re.DOTALL)+'\n'))
+                    source_thread = requests.get('http://boards.4chan.org/g/thread/'+number).text
+                    soup_thread = BeautifulSoup(source_thread,"html5lib")
+                    for each_answer in soup_thread.find_all('div',class_='postContainer replyContainer'):
+                        count_replies+=1
+                    print('- Replies: '+'\x1b[1;31;40m'  +str(count_replies)+'\x1b[0m')
                     count += 1
 
 def fill_array(soup_thread,thread_num):
@@ -88,7 +93,7 @@ def main():
     thread_num= []
     count = 0
     main_page(thread_list,soup,count)
-    query_choice=input('Choose thread: ')
+    query_choice=input('Choose thread(#): ')
     thread_page(query_choice,thread_list,thread_num)
     cmd = input('Command: ')
     while(cmd != 'exit'):
