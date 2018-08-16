@@ -6,6 +6,11 @@ A terminal based 4chan viewer using python.
 * requests
 * html5lib
 
+## Comands
+* refresh : Refresh the thread
+* only xxxxxxx : Show all messages (either sent or mentioned) of a certain users.
+* back : go back to the previous screen
+
 ## Screenshots
 Showing all Threads(first page):
 
