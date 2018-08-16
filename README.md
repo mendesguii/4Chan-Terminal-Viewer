@@ -6,7 +6,7 @@ A terminal based 4chan viewer using python.
 * requests
 * html5lib
 
-# Screenshots
+## Screenshots
 
 Showing all Threads:
 ![alt text](https://i.imgur.com/eC2xPfz.png "Threads")
