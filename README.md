@@ -8,7 +8,7 @@ A terminal based 4chan viewer using python.
 
 ## Comands
 * refresh : Refresh the thread
-* only xxxxxxx : Show all messages (either sent or mentioned) of a certain users.
+* only xxxxxxx : Show all messages (either sent or mentioned) of a certain user.
 * back : go back to the previous screen
 
 ## Screenshots
