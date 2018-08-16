@@ -8,6 +8,9 @@ A terminal based 4chan viewer using python.
 
 ## Screenshots
 Showing all Threads(first page):
+
+
+
 ![alt text](https://i.imgur.com/eC2xPfz.png "Threads")
 
 When you select a thread, you can see all the replies:
