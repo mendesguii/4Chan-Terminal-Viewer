@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 import os
+import re
 
 thread_num_c = []
 
@@ -23,8 +24,10 @@ def main_page(thread_list,soup,count):
                     thread_list.append(number)
                     print('==========#'+str(count)+'=============')
                     print('||POST N# '+number+' ||  ')
-                    print('\n'+'- OP: '+title.replace('>','')+'\n')
+                    print('\n'+('- '+'\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')+(re.sub("(.{80})", "\\1\n", title.replace('>',''), 0, re.DOTALL)+'\n'))
+
                     count += 1
+
 def fill_array(soup_thread,thread_num):
     for each_answer in soup_thread.find_all('div',class_='postContainer replyContainer'):
             num_thread = each_answer.find('blockquote',class_='postMessage')['id'].replace('m','')
@@ -50,12 +53,9 @@ def thread_page(query_choice,thread_list,thread_num):
                 answer_text= answer_text.replace(num,thread_num_c[thread_num.index(num)]+num+ '\x1b[0m'+' ')
                 break
         print('======================')
-        print('||'+number_answer)
-        print('||'+answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')))
+        print('||'+number_answer)  
+        print('||'+(re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')), 0, re.DOTALL)))
     #print(list(set(thread_num)))
-
-def refresh_thread():
-    pass
 
 
 def main():
