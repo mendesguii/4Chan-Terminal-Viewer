@@ -13,6 +13,7 @@ def generate_colors():
         #print(len(thread_num_c))
 
 def main_page(thread_list,soup,count):
+    os.system('clear')
     generate_colors()
     for thread in soup.find_all('div',class_='thread'):
             for each_title in thread.find_all('div',class_='post op'):
@@ -66,5 +67,11 @@ def main():
     main_page(thread_list,soup,count)
     query_choice=input('Choose thread: ')
     thread_page(query_choice,thread_list,thread_num)
+    cmd = input('Command: ')
+    while(cmd != 'exit'):
+        if 'refresh' in cmd:
+            thread_page(query_choice,thread_list,thread_num)
+            cmd = input('Command: ')
+        if 'back' in cmd:
+            main()
 main()
-
