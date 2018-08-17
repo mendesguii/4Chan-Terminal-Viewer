@@ -45,7 +45,7 @@ def thread_page(query_choice,thread_list,thread_num):
     number_t_page = soup_thread.find('blockquote', class_='postMessage')['id'].replace('m', '')
     os.system('clear')
     print('N# '+number_t_page+' '+'\x1b[1;31;40m' +'OP'+'\x1b[0m'+' '+'\n')
-    print(title_t_page)
+    print(re.sub("(.{80})", "\\1\n", title_t_page, 0, re.DOTALL)) 
     fill_array(soup_thread,thread_num)
     for each_answer in soup_thread.find_all('div',class_='postContainer replyContainer'):            
         answer_text = each_answer.find('blockquote',class_='postMessage').text

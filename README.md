@@ -16,8 +16,8 @@ Showing all Threads(first page):
 
 
 
-![alt text](https://i.imgur.com/eC2xPfz.png "Threads")
+![alt text](https://i.imgur.com/MVTVHMU.png "Threads")
 
 When you select a thread, you can see all the replies:
-![alt text](https://i.imgur.com/n0fimjQ.png "Replies")
+![alt text](https://i.imgur.com/ILBApGk.png "Replies")
 
