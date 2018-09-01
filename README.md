@@ -10,6 +10,7 @@ A terminal based 4chan viewer using python.
 * refresh : Refresh the thread
 * only xxxxxxx : Show all messages (either sent or mentioned) of a certain user.
 * back : go back to the previous screen
+* change : can select another board
 
 ## Screenshots
 Showing all Threads(first page):

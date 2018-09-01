@@ -13,8 +13,9 @@ def generate_colors():
                 thread_num_c.append('\x1b['+str(style)+';'+str(fg)+';'+str(bg)+'m')
         #print(len(thread_num_c))
 
-def main_page(thread_list,soup,count):
+def main_page(thread_list,soup,count,forum):
     os.system('clear')
+    print('                                   '+'\x1b[1;37;40m'+'\x1b[1;31;40m'+soup.title.text.replace(' - 4chan','')+'\x1b[0m'+' '+'\x1b[0m'+'\n')
     generate_colors()
     for thread in soup.find_all('div',class_='thread'):
             for each_title in thread.find_all('div',class_='post op'):
@@ -25,7 +26,7 @@ def main_page(thread_list,soup,count):
                     print('\x1b[1;37;40m'+'======================================= #'+str(count)+' ======================================='+'\x1b[0m')
                     print('                               ||Thread N# '+'\x1b[1;31;40m' +number+'\x1b[0m'+' ||  ')
                     print('\n'+(re.sub("(.{80})", "\\1\n", title.replace('>',''), 0, re.DOTALL)+'\n'))
-                    source_thread = requests.get('http://boards.4chan.org/g/thread/'+number).text
+                    source_thread = requests.get('http://boards.4chan.org/'+forum+'/thread/'+number).text
                     soup_thread = BeautifulSoup(source_thread,"html5lib")
                     count_replies = 0
                     for each_answer in soup_thread.find_all('div',class_='postContainer replyContainer'):
@@ -38,8 +39,8 @@ def fill_array(soup_thread,thread_num):
             num_thread = each_answer.find('blockquote',class_='postMessage')['id'].replace('m','')
             thread_num.append(num_thread)
 
-def thread_page(query_choice,thread_list,thread_num):
-    source_thread = requests.get('http://boards.4chan.org/g/thread/'+thread_list[int(query_choice)]).text
+def thread_page(query_choice,thread_list,thread_num,forum):
+    source_thread = requests.get('http://boards.4chan.org/'+forum+'/thread/'+thread_list[int(query_choice)]).text
     soup_thread = BeautifulSoup(source_thread,"html5lib")
     title_t_page = soup_thread.find('blockquote', class_='postMessage').text
     number_t_page = soup_thread.find('blockquote', class_='postMessage')['id'].replace('m', '')
@@ -62,8 +63,8 @@ def thread_page(query_choice,thread_list,thread_num):
         print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))
     #print(list(set(thread_num)))
 
-def only_user_thread(thread,number_user,thread_num):
-    source_thread = requests.get('http://boards.4chan.org/g/thread/'+thread).text
+def only_user_thread(thread,number_user,thread_num,forum):
+    source_thread = requests.get('http://boards.4chan.org/'+forum+'/thread/'+thread).text
     soup_thread = BeautifulSoup(source_thread,"html5lib")
     title_t_page = soup_thread.find('blockquote', class_='postMessage').text
     number_t_page = soup_thread.find('blockquote', class_='postMessage')['id'].replace('m', '')
@@ -83,30 +84,38 @@ def only_user_thread(thread,number_user,thread_num):
         if (number_user in number_answer or number_user in answer_text):
             print('\x1b[1;37;40m'+'================================================================================='+'\x1b[0m')
             print('||'+number_answer+'||')  
-            print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))
-   
+            print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))   
 
 def main():
-    source = requests.get('http://boards.4chan.org/g/').text
+    forum = input('Type the forum: ')
+    source = requests.get('http://boards.4chan.org/'+forum+'/').text
     soup = BeautifulSoup(source, "html5lib")
     thread_list = []
     thread_num= []
     count = 0
-    main_page(thread_list,soup,count)
-    query_choice=input('Choose thread(#): ')
-    thread_page(query_choice,thread_list,thread_num)
+    main_page(thread_list,soup,count,forum)
+    #query_choice=input('Choose thread(#): ')
+    #thread_page(query_choice,thread_list,thread_num,forum)
     cmd = input('Command: ')
     while(cmd != 'exit'):
-        if 'refresh' in cmd:
-            thread_page(query_choice,thread_list,thread_num)
-            cmd = input('Command: ')
         if 'back' in cmd:
+            main_page(thread_list,soup,count,forum)
+            cmd = input('Command: ')
+        if 'change' in cmd:
             main()
         if 'only' in cmd:
             cmd = cmd.split(' ')
-            only_user_thread(thread_list[int(query_choice)],str(cmd[1]),thread_num)
+            only_user_thread(thread_list[int(aux)],str(cmd[1]),thread_num,forum)
             cmd = input('Command: ')
-            if 'back' in cmd:
-                 thread_page(query_choice,thread_list,thread_num)
-                 cmd = input('Command: ')
+        if 'back' in cmd:
+            thread_page(str(aux),thread_list,thread_num,forum)
+            cmd = input('Command: ')
+        if 'thread' in cmd:
+            cmd = cmd.split(' ')
+            aux = cmd[1]
+            thread_page(str(cmd[1]),thread_list,thread_num,forum)
+            cmd = input('Command: ')
+        if 'refresh' in cmd:
+            thread_page(str(aux),thread_list,thread_num,forum)
+            cmd = input('Command: ')
 main()
