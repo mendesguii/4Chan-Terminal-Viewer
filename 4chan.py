@@ -163,4 +163,6 @@ def main():
         if 'refresh' in cmd:
             thread_page(str(aux),thread_list,thread_num,forum)
             cmd = input('Command: ')
+        else:
+            cmd = input('Command: ')
 main()
