@@ -19,19 +19,32 @@ def main_page(thread_list,soup,count,forum):
     generate_colors()
     for thread in soup.find_all('div',class_='thread'):
             for each_title in thread.find_all('div',class_='post op'):
+                if each_title.find('div',class_='fileText') is not None:
+                    img= each_title.find('div',class_='fileText').a['href']
+                else:
+                    img =''
+                header = each_title.find('div',class_='postInfo').span.text
                 title= each_title.find('blockquote',class_='postMessage').text
                 number = each_title.find('blockquote',class_='postMessage')['id'].replace('m','')
+                                
                 if 'The /g/ Wiki' not in title:
                     thread_list.append(number)
                     print('\x1b[1;37;40m'+'======================================= #'+str(count)+' ======================================='+'\x1b[0m')
                     print('                               ||Thread N# '+'\x1b[1;31;40m' +number+'\x1b[0m'+' ||  ')
+                    if len(img) > 1:
+                        print('\n'+'[IMG] '+img)
+                    if len(header) > 1:
+                        print('\n'+header)
                     print('\n'+(re.sub("(.{80})", "\\1\n", title.replace('>',''), 0, re.DOTALL)+'\n'))
                     source_thread = requests.get('http://boards.4chan.org/'+forum+'/thread/'+number).text
                     soup_thread = BeautifulSoup(source_thread,"html5lib")
                     count_replies = 0
+                    count_img = 0
                     for each_answer in soup_thread.find_all('div',class_='postContainer replyContainer'):
                         count_replies+=1
-                    print('- Replies: '+'\x1b[1;31;40m'  +str(count_replies)+'\x1b[0m')
+                    for each_image in soup_thread.find_all('a',class_='fileThumb'):
+                        count_img+=1
+                    print('- Replies: '+'\x1b[1;31;40m'  +str(count_replies)+'\x1b[0m'+'  Images: '+'\x1b[1;31;40m'+str(count_img)+'\x1b[0m'+ ' -')
                     count += 1
 
 def fill_array(soup_thread,thread_num):
@@ -44,11 +57,24 @@ def thread_page(query_choice,thread_list,thread_num,forum):
     soup_thread = BeautifulSoup(source_thread,"html5lib")
     title_t_page = soup_thread.find('blockquote', class_='postMessage').text
     number_t_page = soup_thread.find('blockquote', class_='postMessage')['id'].replace('m', '')
+    header_a = soup_thread.find('div',class_='postInfo').span.text
+    if soup_thread.find('div',class_='fileText') is not None:
+        img_op= soup_thread.find('div',class_='fileText').a['href']
+    else:
+        img_op=''
     os.system('clear')
     print('N# '+number_t_page+' '+'\x1b[1;31;40m' +'OP'+'\x1b[0m'+' '+'\n')
-    print(re.sub("(.{80})", "\\1\n", title_t_page, 0, re.DOTALL)) 
+    if len(img_op) > 1:
+        print('\n'+'[IMG] '+img_op+'\n')
+    if len(header_a) > 1:
+        print('\n'+header_a+'\n')
+    print(re.sub("(.{80})", "\\1\n", title_t_page, 0, re.DOTALL))
     fill_array(soup_thread,thread_num)
     for each_answer in soup_thread.find_all('div',class_='postContainer replyContainer'):            
+        if each_answer.find('div',class_='fileText') is not None:
+            img_a= each_answer.find('div',class_='fileText').a['href']
+        else:
+            img_a =''
         answer_text = each_answer.find('blockquote',class_='postMessage').text
         number_answer = each_answer.find('blockquote',class_='postMessage')['id'].replace('m','')
 
@@ -60,6 +86,9 @@ def thread_page(query_choice,thread_list,thread_num,forum):
                 #break
         print('\x1b[1;37;40m'+'================================================================================='+'\x1b[0m')
         print('||'+number_answer+'||')  
+        if len(img_a) > 1:
+            print('\n'+'[IMG] '+img_a+'\n')
+        
         print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))
     #print(list(set(thread_num)))
 
@@ -68,10 +97,24 @@ def only_user_thread(thread,number_user,thread_num,forum):
     soup_thread = BeautifulSoup(source_thread,"html5lib")
     title_t_page = soup_thread.find('blockquote', class_='postMessage').text
     number_t_page = soup_thread.find('blockquote', class_='postMessage')['id'].replace('m', '')
+    header_a = soup_thread.find('div',class_='postInfo').span.text
+    if soup_thread.find('div',class_='fileText') is not None:
+        img_op= soup_thread.find('div',class_='fileText').a['href']
+    else:
+        img_op=''
     os.system('clear')
     print('N# '+number_t_page+' '+'\x1b[1;31;40m' +'OP'+'\x1b[0m'+' '+'\n')
-    print(title_t_page)
+    if len(img_op) > 1:
+        print('\n'+'[IMG] '+img_op+'\n')
+    if len(header_a) > 1:
+        print('\n'+header_a+'\n')
+    print(re.sub("(.{80})", "\\1\n", title_t_page, 0, re.DOTALL))
+    fill_array(soup_thread,thread_num)
     for each_answer in soup_thread.find_all('div',class_='postContainer replyContainer'):            
+        if each_answer.find('div',class_='fileText') is not None:
+            img_a= each_answer.find('div',class_='fileText').a['href']
+        else:
+            img_a =''
         answer_text = each_answer.find('blockquote',class_='postMessage').text
         number_answer = each_answer.find('blockquote',class_='postMessage')['id'].replace('m','')
 
@@ -83,8 +126,10 @@ def only_user_thread(thread,number_user,thread_num,forum):
                 #break
         if (number_user in number_answer or number_user in answer_text):
             print('\x1b[1;37;40m'+'================================================================================='+'\x1b[0m')
-            print('||'+number_answer+'||')  
-            print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))   
+            print('||'+number_answer+'||')
+            if len(img_a) > 1:
+                print('\n'+'[IMG] '+img_a+'\n')
+            print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))  
 
 def main():
     forum = input('Type the forum: ')
