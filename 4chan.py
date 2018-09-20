@@ -35,7 +35,7 @@ def main_page(thread_list,soup,count,forum):
                         print('\n'+'[IMG] '+img)
                     if len(header) > 1:
                         print('\n'+header)
-                    print('\n'+(re.sub("(.{80})", "\\1\n", title.replace('>',''), 0, re.DOTALL)+'\n'))
+                    print('\n'+(re.sub("(.{80})", "\\1\n", title.replace('>','').replace('Comment too long. Click here to view the full text.',' [...]'), 0, re.DOTALL)+'\n'))
                     source_thread = requests.get('http://boards.4chan.org/'+forum+'/thread/'+number).text
                     soup_thread = BeautifulSoup(source_thread,"html5lib")
                     count_replies = 0
@@ -87,8 +87,7 @@ def thread_page(query_choice,thread_list,thread_num,forum):
         print('\x1b[1;37;40m'+'================================================================================='+'\x1b[0m')
         print('||'+number_answer+'||')  
         if len(img_a) > 1:
-            print('\n'+'[IMG] '+img_a+'\n')
-        
+            print('\n'+'[IMG] '+img_a+'\n')        
         print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))
     #print(list(set(thread_num)))
 
@@ -132,6 +131,7 @@ def only_user_thread(thread,number_user,thread_num,forum):
             print((re.sub("(.{80})", "\\1\n", answer_text.replace(number_t_page,('\x1b[1;31;40m' +'OP'+'\x1b[0m'+' ')).replace('>>','->'), 0, re.DOTALL)))  
 
 def main():
+    state=1 
     forum = input('Type the forum: ')
     source = requests.get('http://boards.4chan.org/'+forum+'/').text
     soup = BeautifulSoup(source, "html5lib")
@@ -142,27 +142,36 @@ def main():
     #query_choice=input('Choose thread(#): ')
     #thread_page(query_choice,thread_list,thread_num,forum)
     cmd = input('Command: ')
-    while(cmd != 'exit'):
+    while(cmd != 'exit'):      
         if 'back' in cmd:
-            main_page(thread_list,soup,count,forum)
-            cmd = input('Command: ')
-        if 'change' in cmd:
+            if (state == 0):
+                main_page(thread_list,soup,count,forum)
+                cmd = input('Command: ')
+            else:
+                 state=0
+                 thread_page(str(aux),thread_list,thread_num,forum)
+                 cmd = input('Command: ')
+        elif 'change' in cmd:
+            state=0
             main()
-        if 'only' in cmd:
+        elif 'only' in cmd:
             cmd = cmd.split(' ')
             only_user_thread(thread_list[int(aux)],str(cmd[1]),thread_num,forum)
+            state = 1
             cmd = input('Command: ')
-        if 'back' in cmd:
-            thread_page(str(aux),thread_list,thread_num,forum)
-            cmd = input('Command: ')
-        if 'thread' in cmd:
+        elif 'thread' in cmd:
+            state = 0
             cmd = cmd.split(' ')
             aux = cmd[1]
             thread_page(str(cmd[1]),thread_list,thread_num,forum)
             cmd = input('Command: ')
-        if 'refresh' in cmd:
-            thread_page(str(aux),thread_list,thread_num,forum)
-            cmd = input('Command: ')
+        elif 'refresh' in cmd:
+            if (state == 0):
+                thread_page(str(aux),thread_list,thread_num,forum)
+                cmd = input('Command: ')
+            else:
+                main_page(thread_list,soup,count,forum)
+                cmd = input('Command: ')
         else:
             cmd = input('Command: ')
 main()
